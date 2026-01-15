@@ -116,35 +116,53 @@
             </div>
           </div>
 
+          <!-- Workflow Stepper -->
+          <div class="mb-3 flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-2 text-xs font-medium text-slate-500" id="workflowStepper" aria-label="Workflow">
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-ink bg-ink text-white" data-wf-step="validate">校验</span>
+              <span class="text-slate-300">→</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="process">处理</span>
+              <span class="text-slate-300">→</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="merge">合并</span>
+              <span class="text-slate-300">→</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="done">完成</span>
+            </div>
+            <span id="wfStateBadge" class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-mono border border-slate-200 bg-slate-100 text-slate-600">未开始</span>
+          </div>
+
           <!-- Action Buttons -->
-          <div class="flex flex-wrap items-center gap-3 mb-4">
-            <button type="button" id="btnValidate" class="px-6 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]">
-              开始校验
-            </button>
-            <button type="button" id="btnProcess" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              开始处理
-            </button>
-            <button type="button" id="btnMerge" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              合并输出
-            </button>
-            <button type="button" id="btnPause" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              暂停
-            </button>
-            <button type="button" id="btnRetry" class="px-5 py-2.5 bg-white border border-amber-200 text-amber-700 hover:bg-amber-50 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              重试失败部分
-            </button>
-            <button type="button" id="btnCancel" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              取消（可恢复）
-            </button>
-            <button type="button" id="btnReset" class="px-5 py-2.5 bg-white border border-red-200 text-red-700 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              取消并清理
-            </button>
-            <button type="button" id="btnDownload" class="px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-medium rounded-lg transition-colors hidden" disabled>
-              下载输出
-            </button>
-            <button type="button" id="btnLoad" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors">
-              加载任务
-            </button>
+          <div class="flex flex-col gap-3 mb-4">
+            <div class="flex flex-wrap items-center gap-3" id="actionPrimary">
+              <button type="button" id="btnValidate" class="px-6 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]">
+                开始校验
+              </button>
+              <button type="button" id="btnProcess" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                开始处理
+              </button>
+              <button type="button" id="btnMerge" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                合并输出
+              </button>
+              <button type="button" id="btnDownload" class="px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                下载输出
+              </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-3" id="actionControls">
+              <button type="button" id="btnPause" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                暂停
+              </button>
+              <button type="button" id="btnRetry" class="px-5 py-2.5 bg-white border border-amber-200 text-amber-700 hover:bg-amber-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                重试失败部分
+              </button>
+              <button type="button" id="btnCancel" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                取消（可恢复）
+              </button>
+              <button type="button" id="btnReset" class="px-5 py-2.5 bg-white border border-red-200 text-red-700 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                取消并清理
+              </button>
+              <button type="button" id="btnLoad" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors">
+                加载任务
+              </button>
+            </div>
           </div>
 
           <div class="pt-0 mb-8 flex flex-wrap items-center justify-between gap-3">
@@ -441,6 +459,7 @@
     const metaPhase = document.getElementById('metaPhase');
     const metaModelWrap = document.getElementById('metaModelWrap');
     const metaModel = document.getElementById('metaModel');
+    const wfStateBadge = document.getElementById('wfStateBadge');
     const btnValidate = document.getElementById('btnValidate');
     const btnProcess = document.getElementById('btnProcess');
     const btnMerge = document.getElementById('btnMerge');
@@ -1096,6 +1115,48 @@
       }
     }
 
+    function refreshWorkflowStepper(job) {
+      const state = String(job?.state || '').toLowerCase();
+      const phase = String(job?.phase || '').toLowerCase();
+      const hasJob = !!job;
+
+      const order = ['validate', 'process', 'merge', 'done'];
+      let cur = hasJob ? phase : 'validate';
+      if (!order.includes(cur)) cur = 'validate';
+      if (state === 'done') cur = 'done';
+
+      const curIdx = order.indexOf(cur);
+
+      const base = 'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium';
+      const clsIdle = 'border-slate-200 bg-white text-slate-500';
+      const clsDone = 'border-slate-200 bg-slate-100 text-slate-500';
+      const clsActive = 'border-ink bg-ink text-white';
+      const clsError = 'border-red-200 bg-red-50 text-red-700';
+
+      document.querySelectorAll('[data-wf-step]').forEach((el) => {
+        const step = String(el.getAttribute('data-wf-step') || '').toLowerCase();
+        const idx = order.indexOf(step);
+        let variant = clsIdle;
+        if (idx >= 0 && idx < curIdx) variant = clsDone;
+        if (idx === curIdx) variant = (hasJob && state === 'error') ? clsError : clsActive;
+        el.className = `${base} ${variant}`;
+      });
+
+      if (wfStateBadge) {
+        const badgeBase = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-mono border';
+        let badgeText = '未开始';
+        let badgeVariant = 'border-slate-200 bg-slate-100 text-slate-600';
+        if (hasJob) {
+          badgeText = _stateLabel(state);
+          if (state === 'paused') badgeVariant = 'border-amber-200 bg-amber-50 text-amber-700';
+          else if (state === 'error') badgeVariant = 'border-red-200 bg-red-50 text-red-700';
+          else if (state === 'done') badgeVariant = 'border-emerald-200 bg-emerald-50 text-emerald-700';
+        }
+        wfStateBadge.textContent = badgeText;
+        wfStateBadge.className = `${badgeBase} ${badgeVariant}`;
+      }
+    }
+
     function refreshActionButtons(job) {
       const state = String(job?.state || '').toLowerCase();
       const phase = String(job?.phase || '').toLowerCase();
@@ -1103,52 +1164,44 @@
 
       // Validate: start new job OR resume validate if paused in validate phase.
       const canResumeValidate = hasJob && state === 'paused' && phase === 'validate';
-      _setVisible(btnValidate, !hasJob || canResumeValidate);
       if (btnValidate) btnValidate.textContent = canResumeValidate ? '继续校验' : '开始校验';
-      _setDisabled(btnValidate, false);
+      _setDisabled(btnValidate, !( !hasJob || canResumeValidate ));
 
       const canProcess = hasJob && state === 'paused' && phase === 'process';
-      _setVisible(btnProcess, canProcess);
       _setDisabled(btnProcess, !canProcess);
       if (btnProcess) {
         const done = Number(job?.progress?.done_chunks || 0);
-        btnProcess.textContent = (canProcess && done > 0) ? '继续处理' : '开始处理';
+        btnProcess.textContent = (hasJob && phase === 'process' && done > 0) ? '继续处理' : '开始处理';
       }
 
       const canMerge = hasJob && state === 'paused' && phase === 'merge';
-      _setVisible(btnMerge, canMerge);
       _setDisabled(btnMerge, !canMerge);
 
       const canPause = hasJob && (state === 'queued' || state === 'running') && phase === 'process';
-      _setVisible(btnPause, canPause);
       _setDisabled(btnPause, !canPause);
 
       const canRetry = hasJob && state === 'error';
-      _setVisible(btnRetry, canRetry);
       _setDisabled(btnRetry, !canRetry);
 
-      const showCancel = hasJob;
-      _setVisible(btnCancel, showCancel);
-      _setDisabled(btnCancel, !showCancel);
+      _setDisabled(btnCancel, !hasJob);
       if (btnCancel) {
-        if (state === 'done') btnCancel.textContent = '新任务';
+        if (!hasJob) btnCancel.textContent = '取消（可恢复）';
+        else if (state === 'done') btnCancel.textContent = '新任务';
         else if (state === 'paused' || state === 'error') btnCancel.textContent = '返回初始态';
         else btnCancel.textContent = '取消（可恢复）';
       }
 
-      const showReset = hasJob;
-      _setVisible(btnReset, showReset);
-      _setDisabled(btnReset, !showReset);
+      _setDisabled(btnReset, !hasJob);
       if (btnReset) {
-        btnReset.textContent = (state === 'done') ? '清理任务记录' : '取消并清理';
+        btnReset.textContent = (hasJob && state === 'done') ? '清理任务记录' : '取消并清理';
       }
 
       const canDownload = hasJob && state === 'done';
-      _setVisible(btnDownload, canDownload);
       _setDisabled(btnDownload, !canDownload);
 
-      _setVisible(btnLoad, true);
       _setDisabled(btnLoad, false);
+
+      refreshWorkflowStepper(job);
     }
 
     function _llmSnapshot() {
