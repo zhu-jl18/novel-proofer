@@ -403,6 +403,22 @@ class JobListResponse(BaseModel):
     jobs: list[JobSummaryOut]
 
 
+class InputStatsOut(BaseModel):
+    job_id: str
+    input_chars: int
+
+
+def _count_non_whitespace_chars_from_utf8_file(path: Path) -> int:
+    n = 0
+    with path.open("r", encoding="utf-8", errors="replace") as f:
+        while True:
+            chunk = f.read(1024 * 1024)
+            if not chunk:
+                break
+            n += sum(1 for ch in chunk if not ch.isspace())
+    return n
+
+
 def _job_to_out(st: JobStatus) -> JobOut:
     pct = 0
     if st.total_chunks > 0:
@@ -751,6 +767,34 @@ async def get_job(
     payload.chunk_counts = chunk_counts
     payload.has_more = has_more
     return payload
+
+
+@app.get("/api/v1/jobs/{job_id}/input-stats", response_model=InputStatsOut)
+async def get_job_input_stats(job_id: str):
+    st = GLOBAL_JOBS.get(job_id)
+    if st is None:
+        raise HTTPException(status_code=404, detail="job not found")
+
+    try:
+        p = _input_cache_path(job_id)
+        resolved = p.resolve()
+        root = _input_cache_root().resolve()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+    if resolved != root and root not in resolved.parents:
+        raise HTTPException(status_code=400, detail="invalid input cache path")
+    if not resolved.exists():
+        raise HTTPException(status_code=404, detail="job input cache not found")
+
+    try:
+        chars = _count_non_whitespace_chars_from_utf8_file(resolved)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+    return InputStatsOut(job_id=st.job_id, input_chars=int(chars))
 
 
 @app.get("/api/v1/jobs/{job_id}/download")
