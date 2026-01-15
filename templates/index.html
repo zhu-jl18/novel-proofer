@@ -1255,7 +1255,7 @@
 
       const canRetry = hasJob && state === 'error';
 
-      const canNewTask = hasJob && !((state === 'queued' || state === 'running') && phase === 'process');
+      const canNewTask = hasJob && !(state === 'queued' || state === 'running');
 
       const canDeleteTask = hasJob && !((state === 'queued' || state === 'running') && phase === 'process');
 
@@ -1608,6 +1608,40 @@
       pollTimer = setInterval(() => refreshJobOnce(jobId), 1000);
     }
 
+    let _exitPauseSent = false;
+
+    function _bestEffortPauseJob(jobId) {
+      const jid = String(jobId || '').trim();
+      if (!jid) return;
+      const url = `api/v1/jobs/${encodeURIComponent(jid)}/pause`;
+
+      // Prefer sendBeacon so refresh/close still sends the request (best-effort).
+      try {
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url, '');
+          return;
+        }
+      } catch (e) {}
+
+      // Fallback: keepalive fetch (also best-effort).
+      try {
+        fetch(url, { method: 'POST', keepalive: true });
+      } catch (e) {}
+    }
+
+    function pauseJobOnExitBestEffort() {
+      // Goal: closing/refreshing the UI pauses in-flight LLM processing to avoid extra cost.
+      // Server-side: /pause only succeeds in phase=process; validate/merge will no-op.
+      if (_exitPauseSent) return;
+      if (!currentJobId) return;
+      _exitPauseSent = true;
+      _bestEffortPauseJob(currentJobId);
+    }
+
+    window.addEventListener('pagehide', pauseJobOnExitBestEffort);
+    window.addEventListener('beforeunload', pauseJobOnExitBestEffort);
+    window.addEventListener('pageshow', () => { _exitPauseSent = false; });
+
     function detachUi({ clearFile = true } = {}) {
       stopPolling();
       pollInFlight = false;
@@ -1821,14 +1855,13 @@
       const st = String(currentJobState || '').toLowerCase();
       const phase = String(currentJobPhase || '').toLowerCase();
       const isRunning = st === 'queued' || st === 'running';
-      if (isRunning && phase === 'process') {
-        show('校对进行中：请先“暂停”再开始新任务。');
+      if (isRunning) {
+        if (phase === 'process') show('校对进行中：请先“暂停”再开始新任务。');
+        else show('任务运行中：请等待完成后再开始新任务，或直接删除任务。');
         return;
       }
       detachUi({ clearFile: true });
-      show(isRunning
-        ? '已切换到新任务。该任务仍在后台运行；可通过“加载任务”重新关联查看状态（进入暂停/完成后再继续下一步/下载）。'
-        : '已切换到新任务。可通过“加载任务”返回该任务继续/下载。');
+      show('已切换到新任务。可通过“加载任务”返回该任务继续/下载。');
     });
 
     btnReset?.addEventListener('click', async () => {
