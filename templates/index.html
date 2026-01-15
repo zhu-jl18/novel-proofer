@@ -117,49 +117,49 @@
           </div>
 
           <!-- Workflow Stepper -->
-          <div class="mb-3 flex flex-wrap items-center gap-2">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white/70 px-3 py-2">
             <div class="flex items-center gap-2 text-xs font-medium text-slate-500" id="workflowStepper" aria-label="Workflow">
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-ink bg-ink text-white" data-wf-step="validate">校验</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-ink bg-ink text-white" data-wf-step="validate" title="预处理：解码、切片、本地规则粗处理（不调用 LLM）">预处理</span>
               <span class="text-slate-300">→</span>
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="process">处理</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="process" title="LLM 校对：逐分片调用 LLM + 输出校验 + 自动重试">LLM校对</span>
               <span class="text-slate-300">→</span>
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="merge">合并</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="merge" title="合并：将各分片输出合并为最终文件（可选清理中间产物）">合并</span>
               <span class="text-slate-300">→</span>
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="done">完成</span>
+              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="done" title="完成：输出文件已生成，可下载/新任务">完成</span>
             </div>
             <span id="wfStateBadge" class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-mono border border-slate-200 bg-slate-100 text-slate-600">未开始</span>
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex flex-col gap-3 mb-4">
-            <div class="flex flex-wrap items-center gap-3" id="actionPrimary">
-              <button type="button" id="btnValidate" class="px-6 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]">
-                开始校验
+          <div class="grid gap-3 mb-5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="actionPrimary">
+              <button type="button" id="btnValidate" class="w-full px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]">
+                开始预处理
               </button>
-              <button type="button" id="btnProcess" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
-                开始处理
+              <button type="button" id="btnProcess" class="w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+                开始校对
               </button>
-              <button type="button" id="btnMerge" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+              <button type="button" id="btnMerge" class="w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
                 合并输出
               </button>
-              <button type="button" id="btnDownload" class="px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+              <button type="button" id="btnDownload" class="w-full px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
                 下载输出
               </button>
             </div>
-            <div class="flex flex-wrap items-center gap-3" id="actionControls">
-              <button type="button" id="btnPause" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="actionControls">
+              <button type="button" id="btnPause" class="w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
                 暂停
               </button>
-              <button type="button" id="btnRetry" class="px-5 py-2.5 bg-white border border-amber-200 text-amber-700 hover:bg-amber-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+              <button type="button" id="btnRetry" class="w-full px-5 py-2.5 bg-white border border-amber-200 text-amber-700 hover:bg-amber-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
                 重试失败部分
               </button>
-              <button type="button" id="btnCancel" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+              <button type="button" id="btnCancel" class="w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
                 取消（可恢复）
               </button>
-              <button type="button" id="btnReset" class="px-5 py-2.5 bg-white border border-red-200 text-red-700 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
+              <button type="button" id="btnReset" class="w-full px-5 py-2.5 bg-white border border-red-200 text-red-700 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
                 取消并清理
               </button>
-              <button type="button" id="btnLoad" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors">
+              <button type="button" id="btnLoad" class="w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors">
                 加载任务
               </button>
             </div>
@@ -174,24 +174,23 @@
             <div class="text-[10px] text-slate-300">v2.0</div>
           </div>
 
-          <!-- Progress Bar -->
-          <div class="mb-8 hidden" id="progress">
-            <div class="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500 mb-2" id="meta">
-              <span id="metaLeft" class="min-w-0 truncate">准备中</span>
-              <span id="metaRight" class="text-right tabular-nums">0%</span>
-              <div class="col-span-2 flex flex-wrap items-center gap-2 min-w-0 hidden" id="metaSub">
-                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-500 font-mono" id="metaPhaseWrap">
-                  <span class="text-slate-400 font-sans">阶段</span>
-                  <span id="metaPhase" class="truncate max-w-[10rem]">-</span>
-                </span>
-                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-500 font-mono hidden" id="metaModelWrap">
-                  <span class="text-slate-400 font-sans">模型</span>
-                  <span id="metaModel" class="truncate max-w-[18rem]">-</span>
-                </span>
+          <!-- Progress Card -->
+          <div class="mb-8 hidden rounded-xl border border-slate-200 bg-slate-50 p-4" id="progress">
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <div class="min-w-0 flex-1">
+                <div class="text-sm font-medium text-slate-700" id="metaLeft">准备中</div>
+                <div class="mt-1 text-xs text-slate-400 truncate hidden" id="metaModelWrap">
+                  <span class="text-slate-400">模型</span>
+                  <span id="metaModel" class="font-mono">-</span>
+                </div>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <div class="text-lg font-bold font-mono text-slate-700" id="metaCounter">0/0</div>
+                <div class="text-xs text-slate-400 font-mono hidden" id="metaPctWrap"><span id="metaPct">0</span>%</div>
               </div>
             </div>
-            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div class="h-full bg-ink transition-all duration-300 ease-out" style="width: 0%" id="bar"></div>
+            <div class="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+              <div class="h-full bg-ink transition-all duration-300 ease-out rounded-full" style="width: 0%" id="bar"></div>
             </div>
           </div>
 
@@ -216,7 +215,7 @@
               <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">当前任务</div>
-                  <div class="text-xs font-mono text-slate-400" id="jobIdShort">-</div>
+                  <div class="text-xs font-mono text-slate-400 text-right break-all select-all" id="jobId">-</div>
                 </div>
                 <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-600">
                   <div class="min-w-0">
@@ -226,7 +225,7 @@
                     <span class="text-slate-400">输出：</span><a class="truncate text-slate-600" id="jobOutputName">-</a>
                   </div>
                 </div>
-                <div class="mt-2 text-[11px] text-slate-400 font-mono truncate" id="jobOutputPath">-</div>
+                <div class="mt-2 text-[11px] text-slate-400 font-mono truncate hidden" id="jobOutputPath"></div>
               </div>
 
               <!-- Stats -->
@@ -454,9 +453,9 @@
     const bar = document.getElementById('bar');
     const meta = document.getElementById('meta');
     const metaLeft = document.getElementById('metaLeft');
-    const metaRight = document.getElementById('metaRight');
-    const metaSub = document.getElementById('metaSub');
-    const metaPhase = document.getElementById('metaPhase');
+    const metaCounter = document.getElementById('metaCounter');
+    const metaPctWrap = document.getElementById('metaPctWrap');
+    const metaPct = document.getElementById('metaPct');
     const metaModelWrap = document.getElementById('metaModelWrap');
     const metaModel = document.getElementById('metaModel');
     const wfStateBadge = document.getElementById('wfStateBadge');
@@ -481,7 +480,7 @@
     const fileInfoEmpty = document.getElementById('fileInfoEmpty');
     const fileInfoContent = document.getElementById('fileInfoContent');
     const fileWordCount = document.getElementById('fileWordCount');
-    const jobIdShort = document.getElementById('jobIdShort');
+    const jobId = document.getElementById('jobId');
     const jobInputName = document.getElementById('jobInputName');
     const jobOutputName = document.getElementById('jobOutputName');
     const jobOutputPath = document.getElementById('jobOutputPath');
@@ -981,7 +980,7 @@
 
     function _phaseLabel(phase) {
       const v = String(phase || '').toLowerCase();
-      const map = { validate: '校验', process: '处理', merge: '合并', done: '完成' };
+      const map = { validate: '预处理', process: 'LLM校对', merge: '合并', done: '完成' };
       return map[v] || (v || '-');
     }
 
@@ -993,7 +992,7 @@
 
     function setJobCard(job) {
       const j = job || null;
-      if (jobIdShort) jobIdShort.textContent = j?.id ? String(j.id).slice(0, 8) : '-';
+      if (jobId) jobId.textContent = j?.id ? String(j.id) : '-';
       if (jobInputName) jobInputName.textContent = j?.input_filename ? String(j.input_filename) : '-';
       if (jobOutputName) {
         const outName = j?.output_filename ? String(j.output_filename) : '-';
@@ -1011,41 +1010,51 @@
           jobOutputName.removeAttribute('download');
         }
       }
-      if (jobOutputPath) jobOutputPath.textContent = j?.output_path ? String(j.output_path) : '-';
+      if (jobOutputPath) {
+        const hasPath = !!j?.output_path;
+        jobOutputPath.textContent = hasPath ? String(j.output_path) : '';
+        jobOutputPath.classList.toggle('hidden', !hasPath);
+      }
     }
 
     function setProgressFromJob(job) {
       if (!job) {
         progress.classList.add('hidden');
-        if (metaSub) metaSub.classList.add('hidden');
         if (metaModelWrap) metaModelWrap.classList.add('hidden');
         return;
       }
 
       progress.classList.remove('hidden');
-      const state = String(job.state || '');
-      const phase = String(job.phase || '');
+      const state = String(job.state || '').toLowerCase();
+      const phase = String(job.phase || '').toLowerCase();
       const done = Number(job?.progress?.done_chunks || 0);
       const total = Number(job?.progress?.total_chunks || 0);
       const pct = total > 0 ? Math.floor((done / total) * 100) : (state === 'done' ? 100 : 0);
       bar.style.width = pct + '%';
 
-      const phaseLabel = _phaseLabel(phase);
+      // Bar color by state
+      bar.classList.remove('bg-ink', 'bg-amber-500', 'bg-red-500', 'bg-emerald-500');
+      if (state === 'error') bar.classList.add('bg-red-500');
+      else if (state === 'paused') bar.classList.add('bg-amber-500');
+      else if (state === 'done') bar.classList.add('bg-emerald-500');
+      else bar.classList.add('bg-ink');
+
       let left = _stateLabel(state);
-      if (state === 'running' && phase === 'validate') left = '正在校验…';
-      if (state === 'paused' && phase === 'process') left = (done > 0 ? '处理已暂停' : '校验完成，等待开始处理');
-      if (state === 'running' && phase === 'process') left = '正在处理…';
-      if (state === 'error' && phase === 'process') left = '处理出错';
-      if (state === 'paused' && phase === 'merge') left = '处理完成，等待合并输出';
+      if (state === 'running' && phase === 'validate') left = '正在预处理…';
+      if (state === 'paused' && phase === 'process') left = (done > 0 ? '校对已暂停' : '预处理完成，等待开始校对');
+      if (state === 'running' && phase === 'process') left = '正在校对…';
+      if (state === 'error' && phase === 'process') left = '校对出错';
+      if (state === 'paused' && phase === 'merge') left = '校对完成，等待合并输出';
       if (state === 'running' && phase === 'merge') left = '正在合并输出…';
-      if (state === 'done') left = '已完成';
+      if (state === 'done') left = '完成';
 
-      const counter = total > 0 ? ` ${done}/${total}` : '';
-      metaLeft.textContent = `${left}${counter}`;
-      metaRight.textContent = pct + '%';
+      metaLeft.textContent = left;
+      if (metaCounter) metaCounter.textContent = `${done}/${total}`;
 
-      if (metaSub) metaSub.classList.remove('hidden');
-      if (metaPhase) metaPhase.textContent = phaseLabel;
+      // Show pct only when 0 < pct < 100
+      const showPct = pct > 0 && pct < 100;
+      if (metaPctWrap) metaPctWrap.classList.toggle('hidden', !showPct);
+      if (metaPct) metaPct.textContent = String(pct);
 
       const model = job?.llm_model ? String(job.llm_model).trim() : '';
       if (metaModel) metaModel.textContent = model || '-';
@@ -1127,7 +1136,7 @@
 
       const curIdx = order.indexOf(cur);
 
-      const base = 'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium';
+      const base = 'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium cursor-help';
       const clsIdle = 'border-slate-200 bg-white text-slate-500';
       const clsDone = 'border-slate-200 bg-slate-100 text-slate-500';
       const clsActive = 'border-ink bg-ink text-white';
@@ -1162,28 +1171,32 @@
       const phase = String(job?.phase || '').toLowerCase();
       const hasJob = !!job;
 
+      const BTN_SOLID_INK = 'w-full px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]';
+      const BTN_OUTLINE = 'w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors';
+      const BTN_SOLID_EMERALD = 'w-full px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]';
+      const BTN_OUTLINE_EMERALD = 'w-full px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-medium rounded-lg transition-colors';
+      const BTN_SOLID_AMBER = 'w-full px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]';
+      const BTN_OUTLINE_AMBER = 'w-full px-5 py-2.5 bg-white border border-amber-200 text-amber-700 hover:bg-amber-50 text-sm font-medium rounded-lg transition-colors';
+      const BTN_OUTLINE_CANCEL = 'w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-sm font-medium rounded-lg transition-colors';
+      const BTN_OUTLINE_RED = 'w-full px-5 py-2.5 bg-white border border-red-200 text-red-700 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors';
+
       // Validate: start new job OR resume validate if paused in validate phase.
       const canResumeValidate = hasJob && state === 'paused' && phase === 'validate';
-      if (btnValidate) btnValidate.textContent = canResumeValidate ? '继续校验' : '开始校验';
-      _setDisabled(btnValidate, !( !hasJob || canResumeValidate ));
+      const canValidate = (!hasJob) || canResumeValidate;
+      if (btnValidate) btnValidate.textContent = canResumeValidate ? '继续预处理' : '开始预处理';
 
       const canProcess = hasJob && state === 'paused' && phase === 'process';
-      _setDisabled(btnProcess, !canProcess);
       if (btnProcess) {
         const done = Number(job?.progress?.done_chunks || 0);
-        btnProcess.textContent = (hasJob && phase === 'process' && done > 0) ? '继续处理' : '开始处理';
+        btnProcess.textContent = (hasJob && phase === 'process' && done > 0) ? '继续校对' : '开始校对';
       }
 
       const canMerge = hasJob && state === 'paused' && phase === 'merge';
-      _setDisabled(btnMerge, !canMerge);
 
       const canPause = hasJob && (state === 'queued' || state === 'running') && phase === 'process';
-      _setDisabled(btnPause, !canPause);
 
       const canRetry = hasJob && state === 'error';
-      _setDisabled(btnRetry, !canRetry);
 
-      _setDisabled(btnCancel, !hasJob);
       if (btnCancel) {
         if (!hasJob) btnCancel.textContent = '取消（可恢复）';
         else if (state === 'done') btnCancel.textContent = '新任务';
@@ -1191,14 +1204,38 @@
         else btnCancel.textContent = '取消（可恢复）';
       }
 
-      _setDisabled(btnReset, !hasJob);
       if (btnReset) {
         btnReset.textContent = (hasJob && state === 'done') ? '清理任务记录' : '取消并清理';
       }
 
       const canDownload = hasJob && state === 'done';
-      _setDisabled(btnDownload, !canDownload);
 
+      let primaryKey = null;
+      if (!hasJob || (state === 'paused' && phase === 'validate')) primaryKey = 'validate';
+      else if (state === 'paused' && phase === 'process') primaryKey = 'process';
+      else if (state === 'paused' && phase === 'merge') primaryKey = 'merge';
+      else if (state === 'done') primaryKey = 'download';
+      else if ((state === 'queued' || state === 'running') && phase === 'process') primaryKey = 'pause';
+      else if (state === 'error') primaryKey = 'retry';
+
+      if (btnValidate) btnValidate.className = (primaryKey === 'validate') ? BTN_SOLID_INK : BTN_OUTLINE;
+      if (btnProcess) btnProcess.className = (primaryKey === 'process') ? BTN_SOLID_INK : BTN_OUTLINE;
+      if (btnMerge) btnMerge.className = (primaryKey === 'merge') ? BTN_SOLID_INK : BTN_OUTLINE;
+      if (btnDownload) btnDownload.className = (primaryKey === 'download') ? BTN_SOLID_EMERALD : BTN_OUTLINE_EMERALD;
+      if (btnPause) btnPause.className = (primaryKey === 'pause') ? BTN_SOLID_INK : BTN_OUTLINE;
+      if (btnRetry) btnRetry.className = (primaryKey === 'retry') ? BTN_SOLID_AMBER : BTN_OUTLINE_AMBER;
+      if (btnCancel) btnCancel.className = BTN_OUTLINE_CANCEL;
+      if (btnReset) btnReset.className = BTN_OUTLINE_RED;
+      if (btnLoad) btnLoad.className = BTN_OUTLINE;
+
+      _setDisabled(btnValidate, !canValidate);
+      _setDisabled(btnProcess, !canProcess);
+      _setDisabled(btnMerge, !canMerge);
+      _setDisabled(btnPause, !canPause);
+      _setDisabled(btnRetry, !canRetry);
+      _setDisabled(btnCancel, !hasJob);
+      _setDisabled(btnReset, !hasJob);
+      _setDisabled(btnDownload, !canDownload);
       _setDisabled(btnLoad, false);
 
       refreshWorkflowStepper(job);
@@ -1598,9 +1635,9 @@
           show(job?.error || '处理出错');
         } else if (job?.state === 'paused' && job?.phase === 'process') {
           const done = Number(job?.progress?.done_chunks || 0);
-          show(done > 0 ? '处理已暂停：可点击“继续处理”。' : '校验完成：可点击“开始处理”。');
+          show(done > 0 ? '校对已暂停：可点击“继续校对”。' : '预处理完成：可点击“开始校对”。');
         } else if (job?.state === 'paused' && job?.phase === 'merge') {
-          show('处理完成：可点击“合并输出”。');
+          show('校对完成：可点击“合并输出”。');
         } else if (job?.state === 'done') {
           show(job?.output_path ? `完成。输出：${job.output_path}\n可点击“下载输出”或“新任务”。` : '完成。已输出到项目 output/ 目录。');
         }
@@ -1667,7 +1704,7 @@
     btnProcess?.addEventListener('click', async () => {
       const jobId = currentJobId;
       if (!jobId) return;
-      show('开始处理…');
+      show('开始校对…');
       const r = await requestResume(jobId);
       if (!r.ok) {
         show(r.error);
@@ -1708,7 +1745,7 @@
       }
       if (currentJobState === 'paused' && currentJobPhase === 'validate') {
         const jobId = currentJobId;
-        show('继续校验…');
+        show('继续预处理…');
         const r = await requestResume(jobId);
         if (!r.ok) {
           show(r.error);
@@ -1791,7 +1828,7 @@
         show('分片大小（字符数）必须在 200-4000 之间。');
         return;
       }
-      show('已提交，准备校验…');
+      show('已提交，准备预处理…');
 
       const file = fd.get('file');
       if (!(file instanceof File)) {
