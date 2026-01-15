@@ -871,17 +871,6 @@ async def list_jobs(
     return JobListResponse(jobs=out)
 
 
-@app.post("/api/v1/jobs/{job_id}/cancel", response_model=JobActionResponse)
-async def cancel_job(job_id: str):
-    st = GLOBAL_JOBS.get(job_id)
-    if st is None:
-        raise HTTPException(status_code=404, detail="job not found")
-    # Recoverable cancel: pause the job (if in-flight) so UI can detach safely and later load/resume.
-    if st.state in {"queued", "running"} and not GLOBAL_JOBS.pause(job_id):
-        raise HTTPException(status_code=409, detail="failed to pause job")
-    return JobActionResponse(ok=True, job=_job_to_out(GLOBAL_JOBS.get(job_id) or st))
-
-
 @app.post("/api/v1/jobs/{job_id}/pause", response_model=JobActionResponse)
 async def pause_job(job_id: str):
     st = GLOBAL_JOBS.get(job_id)

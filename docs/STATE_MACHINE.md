@@ -36,8 +36,8 @@ stateDiagram-v2
 
   error --> pending: 手动重试失败分片\n(/retry-failed)
 
-  processing --> pending: 暂停/取消/进程重启\n(把 in-flight 还原为 pending)
-  retrying --> pending: 暂停/取消/进程重启\n(把 in-flight 还原为 pending)
+  processing --> pending: 暂停/删除任务(reset)/进程重启\n(把 in-flight 还原为 pending)
+  retrying --> pending: 暂停/删除任务(reset)/进程重启\n(把 in-flight 还原为 pending)
 ```
 
 ### 关键字段（Chunk）
@@ -62,7 +62,7 @@ stateDiagram-v2
 - `paused`：已暂停/待用户操作：用于表示“可恢复且当前未运行”。
 - `error`：任务失败（通常是处理阶段存在 `chunk=error`；或合并阶段异常）。
 - `done`：任务完成（已合并生成输出）。
-- `cancelled`：仅用于“删除任务（reset）”的硬取消信号，通常会很快被删除并从 jobs 列表消失；UI 不应把它当作可恢复状态。
+- `cancelled`：仅用于“删除任务（reset）”的硬删除信号，通常会很快被清理并从 jobs 列表消失；UI 不应把它当作可恢复状态。
 
 ### Mermaid（Job）
 

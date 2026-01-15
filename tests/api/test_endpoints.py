@@ -227,19 +227,8 @@ def test_create_job_llm_enabled_requires_base_url_and_model(monkeypatch: pytest.
             GLOBAL_JOBS.delete(str(job_id))
 
 
-def test_job_actions_cancel_pause_resume_retry_cleanup(monkeypatch: pytest.MonkeyPatch):
+def test_job_actions_pause_resume(monkeypatch: pytest.MonkeyPatch):
     client = TestClient(api.app)
-
-    # Cancel
-    job1 = GLOBAL_JOBS.create("in.txt", "out.txt", total_chunks=0)
-    try:
-        r = client.post(f"/api/v1/jobs/{job1.job_id}/cancel")
-        assert r.status_code == 200
-        assert r.json().get("ok") is True
-        st = GLOBAL_JOBS.get(job1.job_id)
-        assert st is not None and st.state == "paused"
-    finally:
-        GLOBAL_JOBS.delete(job1.job_id)
 
     # Pause -> Resume (avoid background runner side effects)
     monkeypatch.setattr(api, "resume_paused_job", lambda *_a, **_k: None)

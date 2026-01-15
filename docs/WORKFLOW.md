@@ -1,6 +1,6 @@
-# Workflow v2：三阶段流程与可恢复取消（Mermaid）
+# Workflow：三阶段流程与任务恢复（Mermaid）
 
-本文面向“用户心智模型 + 排障”，描述 v2 工作流的状态转移与 UI attach 行为。
+本文面向“用户心智模型 + 排障”，描述三阶段工作流的状态转移与 UI attach（重新关联任务）行为。
 
 ## 1) 三阶段（Validate → Process → Merge）
 

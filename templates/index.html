@@ -1045,7 +1045,7 @@
 
     function _stateLabel(state) {
       const v = String(state || '').toLowerCase();
-      const map = { queued: '排队中', running: '运行中', paused: '已暂停', done: '已完成', cancelled: '已取消', error: '出错' };
+      const map = { queued: '排队中', running: '运行中', paused: '已暂停', done: '已完成', cancelled: '已删除', error: '出错' };
       return map[v] || (v || '-');
     }
 
@@ -1472,13 +1472,6 @@
       };
     }
 
-    async function requestCancel(jobId) {
-      if (!jobId) return;
-      try {
-        await fetch(`api/v1/jobs/${encodeURIComponent(jobId)}/cancel`, { method: 'POST' });
-      } catch (e) {}
-    }
-
     async function requestPause(jobId) {
       if (!jobId) return { ok: false, error: 'missing job_id' };
       try {
@@ -1873,9 +1866,16 @@
         show('校对进行中：请先“暂停”再删除任务。');
         return;
       }
-      const confirmMsg = (st === 'done')
+      const isRunning = st === 'queued' || st === 'running';
+      const isDone = st === 'done';
+      const isValidateRunning = isRunning && phase === 'validate';
+      const isMergeRunning = isRunning && phase === 'merge';
+      const phaseLabel = isValidateRunning ? '预处理' : (isMergeRunning ? '合并' : '');
+      const confirmMsg = isDone
         ? '确认"删除任务记录"？该任务的中间态/状态记录将被删除且不可恢复（不会删除最终输出文件 output/）。'
-        : '确认"删除任务"？该任务将被停止并删除中间产物与状态记录，且不可恢复（不会删除 output/ 下已生成的最终输出文件）。';
+        : (isValidateRunning || isMergeRunning)
+          ? `确认"删除任务"？任务正在${phaseLabel}中：将尝试停止当前阶段，完成停止后删除该任务的中间产物与状态记录（不可恢复；不会删除 output/ 下已生成的最终输出文件）。`
+          : '确认"删除任务"？该任务将被删除：中间产物与状态记录将被清理且不可恢复（不会删除 output/ 下已生成的最终输出文件）。';
       if (!(await showConfirm(confirmMsg))) return;
 
       show((st === 'done') ? '正在删除任务记录…' : '正在删除任务…');
@@ -1885,7 +1885,7 @@
         return;
       }
       detachUi({ clearFile: true });
-      show('已提交删除请求。');
+      show((isValidateRunning || isMergeRunning) ? '已提交删除请求：后台停止/清理中。' : '已提交删除请求。');
     });
 
     btnLoad?.addEventListener('click', async () => {
