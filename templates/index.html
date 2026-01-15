@@ -40,7 +40,9 @@
     
     .tab-btn.active { color: #18181b; }
     .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #18181b; }
-    
+
+    .wf-step[style*="--wf-underline"]::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: currentColor; border-radius: 1px; }
+
     .filter-btn.active { background-color: #18181b; color: white; border-color: #18181b; }
     
     /* Smooth fade for content */
@@ -74,7 +76,7 @@
           <div class="mb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- 区域1: 文件选择框 -->
-              <div class="file-drop group relative p-6 border-2 border-dashed border-slate-200 rounded-xl hover:border-ink/50 hover:bg-slate-50 transition-all duration-200 cursor-pointer text-center" id="fileDrop">
+              <div class="file-drop group relative p-5 border border-dashed border-slate-200 rounded-xl bg-slate-50/30 hover:border-slate-300 hover:bg-slate-50/50 transition-colors duration-200 cursor-pointer text-center" id="fileDrop">
                 <div class="pointer-events-none">
                   <div class="mb-2 text-slate-400 group-hover:text-ink transition-colors">
                     <svg class="w-7 h-7 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,7 +88,7 @@
                 <input name="file" type="file" accept=".txt,text/plain" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
               </div>
               <!-- 区域2: 文件信息显示 -->
-              <div class="p-6 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 flex flex-col justify-center" id="fileInfoPanel">
+              <div class="p-5 border border-slate-200 rounded-xl bg-slate-50/30 flex flex-col justify-center" id="fileInfoPanel">
                 <div class="text-center text-slate-400" id="fileInfoEmpty">
                   <svg class="w-7 h-7 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -116,23 +118,21 @@
           </div>
 
           <!-- Workflow Stepper -->
-          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white/70 px-3 py-2">
-            <div class="flex items-center gap-2 text-xs font-medium text-slate-500" id="workflowStepper" aria-label="Workflow">
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-ink bg-ink text-white" data-wf-step="validate" title="预处理：解码、切片、本地规则粗处理（不调用 LLM）">预处理</span>
-              <span class="text-slate-300">→</span>
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="process" title="LLM 校对：逐分片调用 LLM + 输出校验 + 自动重试">LLM校对</span>
-              <span class="text-slate-300">→</span>
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="merge" title="合并：将各分片输出合并为最终文件（可选清理中间产物）">合并</span>
-              <span class="text-slate-300">→</span>
-              <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium border-slate-200 bg-white text-slate-500" data-wf-step="done" title="完成：输出文件已生成，可下载/新任务">完成</span>
+          <div class="mb-4 flex items-center gap-3 text-xs">
+            <div class="flex items-center gap-3" id="workflowStepper" aria-label="Workflow">
+              <span class="wf-step relative pb-0.5 cursor-help text-ink font-medium" data-wf-step="validate" title="预处理：解码、切片、本地规则粗处理（不调用 LLM）">预处理</span>
+              <span class="wf-step relative pb-0.5 cursor-help text-slate-400" data-wf-step="process" title="LLM 校对：逐分片调用 LLM + 输出校验 + 自动重试">LLM校对</span>
+              <span class="wf-step relative pb-0.5 cursor-help text-slate-400" data-wf-step="merge" title="合并：将各分片输出合并为最终文件（可选清理中间产物）">合并</span>
+              <span class="wf-step relative pb-0.5 cursor-help text-slate-400" data-wf-step="done" title="完成：输出文件已生成，可下载/新任务">完成</span>
             </div>
-            <span id="wfStateBadge" class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-mono border border-slate-200 bg-slate-100 text-slate-600">未开始</span>
+            <span class="text-slate-300">·</span>
+            <span id="wfStateBadge" class="text-slate-400">未开始</span>
           </div>
 
           <!-- Action Buttons -->
           <div class="grid gap-3 mb-5">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="actionPrimary">
-              <button type="button" id="btnValidate" class="w-full px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]">
+              <button type="button" id="btnValidate" class="w-full px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg transition-colors active:scale-[0.99]">
                 开始预处理
               </button>
               <button type="button" id="btnProcess" class="w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors opacity-50 cursor-not-allowed" disabled>
@@ -174,7 +174,7 @@
           </div>
 
           <!-- Progress Card -->
-          <div class="mb-8 hidden rounded-xl border border-slate-200 bg-slate-50 p-4" id="progress">
+          <div class="mb-8 hidden rounded-xl border border-slate-100 bg-slate-50/40 p-4" id="progress">
             <div class="flex items-start justify-between gap-4 mb-2">
               <div class="min-w-0 flex-1">
                 <div class="text-sm font-medium text-slate-700" id="metaLeft">准备中</div>
@@ -195,7 +195,7 @@
 
           <!-- Output Message Area -->
           <div class="mb-8 hidden" id="out">
-            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+            <div class="p-4 bg-slate-50/40 rounded-lg border border-slate-100">
               <pre id="outText" class="text-xs font-mono text-slate-600 whitespace-pre-wrap break-all"></pre>
             </div>
           </div>
@@ -571,6 +571,9 @@
       return String(text || '').replace(/\s/g, '').length;
     }
 
+    const INPUT_CHARS_MISSING = Symbol('INPUT_CHARS_MISSING');
+    const INPUT_CHARS_ERROR = Symbol('INPUT_CHARS_ERROR');
+
     const _inputCharsCache = new Map();
     const _inputCharsInFlight = new Set();
 
@@ -583,14 +586,34 @@
       try {
         const res = await fetch(`api/v1/jobs/${encodeURIComponent(jid)}/input-stats`);
         const data = await res.json().catch(() => null);
-        if (!res.ok) return;
-        const n = Number(data?.input_chars || 0);
-        if (!Number.isFinite(n) || n < 0) return;
-        _inputCharsCache.set(jid, Math.floor(n));
+        if (!res.ok) {
+          const marker = (res.status === 404) ? INPUT_CHARS_MISSING : INPUT_CHARS_ERROR;
+          _inputCharsCache.set(jid, marker);
+          if (currentJobId === jid && fileWordCount) {
+            fileWordCount.textContent = (marker === INPUT_CHARS_MISSING) ? '-' : '读取失败';
+          }
+          return;
+        }
+
+        const n = Number(data?.input_chars);
+        if (!Number.isFinite(n) || n < 0) {
+          _inputCharsCache.set(jid, INPUT_CHARS_ERROR);
+          if (currentJobId === jid && fileWordCount) {
+            fileWordCount.textContent = '读取失败';
+          }
+          return;
+        }
+
+        const count = Math.floor(n);
+        _inputCharsCache.set(jid, count);
         if (currentJobId === jid && fileWordCount) {
-          fileWordCount.textContent = Math.floor(n).toLocaleString();
+          fileWordCount.textContent = count.toLocaleString();
         }
       } catch (e) {
+        _inputCharsCache.set(jid, INPUT_CHARS_ERROR);
+        if (currentJobId === jid && fileWordCount) {
+          fileWordCount.textContent = '读取失败';
+        }
       } finally {
         _inputCharsInFlight.delete(jid);
       }
@@ -630,12 +653,17 @@
       }
 
       if (hasJob) {
-        if (fileDropText) fileDropText.textContent = '已加载任务（输入已缓存）';
-        if (fileInfoEmptyText) fileInfoEmptyText.textContent = '已加载任务（无需重新选择文件）';
-        if (fileName) fileName.textContent = String(job?.input_filename || '-');
         const jid = String(job?.id || '').trim();
         const cached = jid ? _inputCharsCache.get(jid) : null;
-        if (fileWordCount) fileWordCount.textContent = (typeof cached === 'number') ? cached.toLocaleString() : '读取中...';
+        if (fileDropText) fileDropText.textContent = '已加载任务（无需重新选择文件）';
+        if (fileInfoEmptyText) fileInfoEmptyText.textContent = '已加载任务（无需重新选择文件）';
+        if (fileName) fileName.textContent = String(job?.input_filename || '-');
+        if (fileWordCount) {
+          if (typeof cached === 'number') fileWordCount.textContent = cached.toLocaleString();
+          else if (cached === INPUT_CHARS_MISSING) fileWordCount.textContent = '-';
+          else if (cached === INPUT_CHARS_ERROR) fileWordCount.textContent = '读取失败';
+          else fileWordCount.textContent = '读取中...';
+        }
         if (fileInfoEmpty) fileInfoEmpty.classList.add('hidden');
         if (fileInfoContent) fileInfoContent.classList.remove('hidden');
         if (jid && cached == null) ensureJobInputChars(jid);
@@ -1157,39 +1185,48 @@
       const hasJob = !!job;
 
       const order = ['validate', 'process', 'merge', 'done'];
+      const labels = { validate: '预处理', process: 'LLM校对', merge: '合并', done: '完成' };
       let cur = hasJob ? phase : 'validate';
       if (!order.includes(cur)) cur = 'validate';
       if (state === 'done') cur = 'done';
-
       const curIdx = order.indexOf(cur);
-
-      const base = 'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium cursor-help';
-      const clsIdle = 'border-slate-200 bg-white text-slate-500';
-      const clsDone = 'border-slate-200 bg-slate-100 text-slate-500';
-      const clsActive = 'border-ink bg-ink text-white';
-      const clsError = 'border-red-200 bg-red-50 text-red-700';
 
       document.querySelectorAll('[data-wf-step]').forEach((el) => {
         const step = String(el.getAttribute('data-wf-step') || '').toLowerCase();
         const idx = order.indexOf(step);
-        let variant = clsIdle;
-        if (idx >= 0 && idx < curIdx) variant = clsDone;
-        if (idx === curIdx) variant = (hasJob && state === 'error') ? clsError : clsActive;
-        el.className = `${base} ${variant}`;
+        const isDone = idx >= 0 && idx < curIdx;
+        const isActive = idx === curIdx;
+        const isError = isActive && hasJob && state === 'error';
+
+        // Reset classes
+        el.className = 'wf-step relative pb-0.5 cursor-help transition-colors';
+        if (isDone) {
+          el.classList.add('text-slate-400');
+          el.innerHTML = labels[step] + ' <span class="text-emerald-500">✓</span>';
+        } else if (isActive) {
+          el.classList.add(isError ? 'text-red-600' : 'text-ink', 'font-medium');
+          el.innerHTML = labels[step];
+          // Add underline via pseudo-element style
+          el.style.setProperty('--wf-underline', '1');
+        } else {
+          el.classList.add('text-slate-400');
+          el.innerHTML = labels[step];
+        }
+        if (!isActive) el.style.removeProperty('--wf-underline');
       });
 
       if (wfStateBadge) {
-        const badgeBase = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-mono border';
         let badgeText = '未开始';
-        let badgeVariant = 'border-slate-200 bg-slate-100 text-slate-600';
+        let badgeCls = 'text-xs text-slate-400';
         if (hasJob) {
           badgeText = _stateLabel(state);
-          if (state === 'paused') badgeVariant = 'border-amber-200 bg-amber-50 text-amber-700';
-          else if (state === 'error') badgeVariant = 'border-red-200 bg-red-50 text-red-700';
-          else if (state === 'done') badgeVariant = 'border-emerald-200 bg-emerald-50 text-emerald-700';
+          if (state === 'paused') badgeCls = 'text-xs text-amber-600';
+          else if (state === 'error') badgeCls = 'text-xs text-red-600';
+          else if (state === 'done') badgeCls = 'text-xs text-emerald-600';
+          else badgeCls = 'text-xs text-slate-500';
         }
         wfStateBadge.textContent = badgeText;
-        wfStateBadge.className = `${badgeBase} ${badgeVariant}`;
+        wfStateBadge.className = badgeCls;
       }
     }
 
@@ -1198,11 +1235,11 @@
       const phase = String(job?.phase || '').toLowerCase();
       const hasJob = !!job;
 
-      const BTN_SOLID_INK = 'w-full px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]';
+      const BTN_SOLID_INK = 'w-full px-5 py-2.5 bg-ink hover:bg-zinc-800 text-white text-sm font-medium rounded-lg transition-colors active:scale-[0.99]';
       const BTN_OUTLINE = 'w-full px-5 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 text-sm font-medium rounded-lg transition-colors';
-      const BTN_SOLID_EMERALD = 'w-full px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]';
+      const BTN_SOLID_EMERALD = 'w-full px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors active:scale-[0.99]';
       const BTN_OUTLINE_EMERALD = 'w-full px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-medium rounded-lg transition-colors';
-      const BTN_SOLID_AMBER = 'w-full px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all active:scale-[0.98]';
+      const BTN_SOLID_AMBER = 'w-full px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors active:scale-[0.99]';
       const BTN_OUTLINE_AMBER = 'w-full px-5 py-2.5 bg-white border border-amber-200 text-amber-700 hover:bg-amber-50 text-sm font-medium rounded-lg transition-colors';
       const BTN_OUTLINE_RED = 'w-full px-5 py-2.5 bg-white border border-red-200 text-red-700 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors';
 

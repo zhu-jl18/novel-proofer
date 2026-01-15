@@ -786,12 +786,32 @@ async def get_job_input_stats(job_id: str):
 
     if resolved != root and root not in resolved.parents:
         raise HTTPException(status_code=400, detail="invalid input cache path")
-    if not resolved.exists():
-        raise HTTPException(status_code=404, detail="job input cache not found")
 
     try:
-        chars = _count_non_whitespace_chars_from_utf8_file(resolved)
+        if resolved.exists():
+            chars = _count_non_whitespace_chars_from_utf8_file(resolved)
+        else:
+            work_dir = getattr(st, "work_dir", None) or str(JOBS_DIR / str(st.job_id))
+
+            try:
+                job_root = JOBS_DIR.resolve()
+                resolved_work_dir = Path(work_dir).resolve()
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=str(e)) from e
+
+            if resolved_work_dir != job_root and job_root not in resolved_work_dir.parents:
+                raise HTTPException(status_code=400, detail="invalid job work_dir")
+
+            pre_dir = resolved_work_dir / "pre"
+            if not pre_dir.exists():
+                raise HTTPException(status_code=404, detail="job input cache not found")
+
+            chars = 0
+            for fp in sorted(pre_dir.glob("*.txt")):
+                chars += _count_non_whitespace_chars_from_utf8_file(fp)
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise
         raise HTTPException(status_code=500, detail=str(e)) from e
 
     return InputStatsOut(job_id=st.job_id, input_chars=int(chars))
