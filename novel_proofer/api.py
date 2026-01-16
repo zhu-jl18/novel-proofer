@@ -791,7 +791,7 @@ async def get_job_input_stats(job_id: str):
         if resolved.exists():
             chars = _count_non_whitespace_chars_from_utf8_file(resolved)
         else:
-            work_dir = getattr(st, "work_dir", None) or str(JOBS_DIR / str(st.job_id))
+            work_dir = getattr(st, "work_dir", None) or str(JOBS_DIR / st.job_id)
 
             try:
                 job_root = JOBS_DIR.resolve()
