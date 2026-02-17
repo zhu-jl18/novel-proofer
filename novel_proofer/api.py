@@ -34,7 +34,9 @@ from novel_proofer.dotenv_store import (
 from novel_proofer.dotenv_store import (
     dotenv_path as dotenv_path,
 )
-from novel_proofer.jobs import GLOBAL_JOBS
+from novel_proofer.formatting.config import FormatConfig
+from novel_proofer.jobs import GLOBAL_JOBS, JobStatus
+from novel_proofer.llm.config import LLMConfig
 from novel_proofer.logging_setup import ensure_file_logging
 from novel_proofer.models import (
     ChunkOut,
@@ -81,7 +83,7 @@ class _JobCommandService:
         return job.job_id
 
     @staticmethod
-    def get_job_or_500(job_id: str) -> Any:
+    def get_job_or_500(job_id: str) -> JobStatus:
         st = GLOBAL_JOBS.get(job_id)
         if st is None:
             raise HTTPException(status_code=500, detail="job store error")
@@ -122,8 +124,8 @@ class _JobCommandService:
     def queue_validate_run(
         *,
         job_id: str,
-        fmt: Any,
-        llm: Any,
+        fmt: FormatConfig,
+        llm: LLMConfig,
         on_submit_failure: Callable[[], None] | None = None,
     ) -> None:
         GLOBAL_JOBS.update(job_id, phase=JobPhase.VALIDATE, format=fmt, last_llm_model=llm.model)

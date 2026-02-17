@@ -536,7 +536,7 @@ def test_rerun_all_creates_new_job_without_reupload(monkeypatch: pytest.MonkeyPa
         r = client.post(
             "/api/v1/jobs",
             data={"options": json.dumps(options, ensure_ascii=False)},
-            files={("file", ("in.txt", "第1章\n\n正文一。\n正文二。\n", "text/plain; charset=utf-8"))},
+            files={"file": ("in.txt", "第1章\n\n正文一。\n正文二。\n", "text/plain; charset=utf-8")},
         )
         assert r.status_code == 201, r.text
         job_id = (r.json().get("job") or {}).get("id")
