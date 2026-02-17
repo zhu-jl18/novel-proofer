@@ -67,3 +67,10 @@ class LLMConfig:
 错误原因：标题不应缩进；段落间出现连续两个空行；章节标题后无空行、缺少缩进、对话和叙述挤在一起
 
 只输出处理后的纯文本，不要任何解释。"""
+
+
+def build_first_chunk_config(cfg: LLMConfig) -> LLMConfig:
+    """Return a copy of *cfg* with the first-chunk system prompt prepended."""
+    from dataclasses import replace
+
+    return replace(cfg, system_prompt=FIRST_CHUNK_SYSTEM_PROMPT_PREFIX + "\n\n" + cfg.system_prompt)
