@@ -6,6 +6,8 @@ from contextlib import suppress
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+_file_handler_log_files: dict[Path, Path] = {}
+
 
 def _truthy(s: str | None) -> bool:
     if s is None:
@@ -30,14 +32,10 @@ def ensure_file_logging(*, log_dir: Path, filename: str = "novel-proofer.log") -
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = (log_dir / filename).resolve()
 
+    if log_file in _file_handler_log_files:
+        return _file_handler_log_files[log_file]
+
     root = logging.getLogger()
-    for h in root.handlers:
-        if getattr(h, "_novel_proofer_file_log", False):
-            base = getattr(h, "baseFilename", None)
-            return Path(str(base)).resolve() if base else log_file
-        base = getattr(h, "baseFilename", None)
-        if base and Path(str(base)).resolve() == log_file:
-            return log_file
 
     handler = RotatingFileHandler(
         log_file,
@@ -45,7 +43,6 @@ def ensure_file_logging(*, log_dir: Path, filename: str = "novel-proofer.log") -
         backupCount=3,
         encoding="utf-8",
     )
-    handler._novel_proofer_file_log = True  # type: ignore[attr-defined]
     handler.setLevel(logging.INFO)
     handler.setFormatter(
         logging.Formatter(
@@ -54,6 +51,7 @@ def ensure_file_logging(*, log_dir: Path, filename: str = "novel-proofer.log") -
         )
     )
     root.addHandler(handler)
+    _file_handler_log_files[log_file] = log_file
 
     lvl = _log_level_from_env()
     if lvl:
