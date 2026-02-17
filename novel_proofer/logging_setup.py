@@ -36,6 +36,10 @@ def ensure_file_logging(*, log_dir: Path, filename: str = "novel-proofer.log") -
         return _file_handler_log_files[log_file]
 
     root = logging.getLogger()
+    for h in root.handlers:
+        if isinstance(h, logging.FileHandler) and Path(h.baseFilename).resolve() == log_file:
+            _file_handler_log_files[log_file] = log_file
+            return log_file
 
     handler = RotatingFileHandler(
         log_file,
