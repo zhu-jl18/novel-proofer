@@ -134,7 +134,7 @@ def _should_cleanup_debug_dir(job_id: str) -> bool:
     st = GLOBAL_JOBS.get(job_id)
     if st is None:
         return True
-    return bool(st.cleanup_debug_dir)
+    return st.cleanup_debug_dir
 
 
 def _chunk_path(work_dir: Path, subdir: str, index: int) -> Path:

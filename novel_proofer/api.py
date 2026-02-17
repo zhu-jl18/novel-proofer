@@ -982,7 +982,7 @@ async def list_jobs(
             continue
         if wanted_states and st.state.lower() not in wanted_states:
             continue
-        st_phase = st.phase.lower() if st.phase else ""
+        st_phase = st.phase.lower()
         if wanted_phases and st_phase not in wanted_phases:
             continue
         out.append(
@@ -1016,7 +1016,7 @@ async def pause_job(job_id: str = Depends(_job_id_dep)):
     st = GLOBAL_JOBS.get(job_id)
     if st is None:
         raise HTTPException(status_code=404, detail="job not found")
-    phase = st.phase.strip().lower() if st.phase else ""
+    phase = st.phase.strip().lower()
     if phase != JobPhase.PROCESS:
         raise HTTPException(status_code=409, detail=f"cannot pause job in phase={phase or None}")
     if not GLOBAL_JOBS.pause(job_id):
