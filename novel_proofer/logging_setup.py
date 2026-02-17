@@ -6,7 +6,7 @@ from contextlib import suppress
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-_file_handler_log_files: dict[Path, Path] = {}
+_file_handler_log_files: set[Path] = set()
 
 
 def _truthy(s: str | None) -> bool:
@@ -33,12 +33,12 @@ def ensure_file_logging(*, log_dir: Path, filename: str = "novel-proofer.log") -
     log_file = (log_dir / filename).resolve()
 
     if log_file in _file_handler_log_files:
-        return _file_handler_log_files[log_file]
+        return log_file
 
     root = logging.getLogger()
     for h in root.handlers:
         if isinstance(h, logging.FileHandler) and Path(h.baseFilename).resolve() == log_file:
-            _file_handler_log_files[log_file] = log_file
+            _file_handler_log_files.add(log_file)
             return log_file
 
     handler = RotatingFileHandler(
@@ -55,7 +55,7 @@ def ensure_file_logging(*, log_dir: Path, filename: str = "novel-proofer.log") -
         )
     )
     root.addHandler(handler)
-    _file_handler_log_files[log_file] = log_file
+    _file_handler_log_files.add(log_file)
 
     lvl = _log_level_from_env()
     if lvl:
