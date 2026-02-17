@@ -114,9 +114,9 @@ def _format_config_from_dict(raw: object) -> FormatConfig:
             default = getattr(_FORMAT_DEFAULTS, f.name)
             val = raw.get(f.name, default)
             if isinstance(default, int) and not isinstance(default, bool):
-                kwargs[f.name] = int(val or default)
+                kwargs[f.name] = int(val) if val not in (None, "") else default
             elif isinstance(default, bool):
-                kwargs[f.name] = bool(val) if val is not None else default
+                kwargs[f.name] = val if isinstance(val, bool) else default
             else:
                 kwargs[f.name] = val
         return FormatConfig(**kwargs)
