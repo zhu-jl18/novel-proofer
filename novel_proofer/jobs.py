@@ -587,9 +587,9 @@ class JobStore:
 
     def list_summaries(self) -> list[JobStatus]:
         with self._lock:
-            items = list(self._jobs.values())
-        items.sort(key=lambda s: s.created_at, reverse=True)
-        return [self._snapshot_job(s, include_chunks=False) for s in items]
+            snapshots = [self._snapshot_job(s, include_chunks=False) for s in self._jobs.values()]
+        snapshots.sort(key=lambda s: s.created_at, reverse=True)
+        return snapshots
 
     def get_chunks_page(
         self,
