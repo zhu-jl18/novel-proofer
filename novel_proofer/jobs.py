@@ -131,7 +131,7 @@ def _normalize_chunk_counts(raw: object, chunks: list[ChunkStatus]) -> dict[str,
     out = _new_chunk_counts()
     for k, v in raw.items():
         key = str(k).strip().lower()
-        if not key:
+        if not key or key not in _CHUNK_STATES:
             continue
         try:
             iv = int(v) if v is not None else 0
@@ -584,12 +584,6 @@ class JobStore:
             if st is None:
                 return None
             return self._snapshot_job(st, include_chunks=False)
-
-    def list(self) -> list[JobStatus]:
-        with self._lock:
-            items = list(self._jobs.values())
-        items.sort(key=lambda s: s.created_at, reverse=True)
-        return [self._snapshot_job(s) for s in items]
 
     def list_summaries(self) -> list[JobStatus]:
         with self._lock:
