@@ -441,9 +441,11 @@ class JobStore:
             st.finished_at = None
 
         # Any in-flight chunks are no longer running; convert them back to pending.
-        for i, cs in enumerate(st.chunk_statuses):
-            if cs.state in {ChunkState.PROCESSING, ChunkState.RETRYING}:
-                st.chunk_statuses[i] = replace(cs, state=ChunkState.PENDING, started_at=None, finished_at=None)
+        _in_flight = {ChunkState.PROCESSING, ChunkState.RETRYING}
+        st.chunk_statuses = [
+            replace(cs, state=ChunkState.PENDING, started_at=None, finished_at=None) if cs.state in _in_flight else cs
+            for cs in st.chunk_statuses
+        ]
 
         # Keep counters consistent even if older files were incomplete.
         st.total_chunks = max(int(st.total_chunks), len(st.chunk_statuses))
