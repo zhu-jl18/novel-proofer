@@ -198,12 +198,12 @@ output/.jobs/{job_id}/
 ├── README.txt
 ├── pre/{index:06d}.txt   # 发送给 LLM 的分片输入
 ├── out/{index:06d}.txt   # 分片最终输出（通过校验）
-└── resp/{index:06d}.txt  # LLM raw 响应（可选：默认仅失败写入；开启“全量保留 raw 响应”后成功也写）
+└── resp/{index:06d}.txt  # LLM raw 响应（可选：默认仅失败写入；开启全量保留后成功也写）
 ```
 
 ### 调试/性能开关（环境变量）
 
-- `NOVEL_PROOFER_LLM_WRITE_RESP=1`：成功 chunk 也写入 `resp/{index}.txt`（全量保留 raw 响应，便于复盘；会增加磁盘 IO）
+- `NOVEL_PROOFER_LLM_WRITE_RESP=1`：成功 chunk 也写入 `resp/{index}.txt`（全量保留 raw 响应，便于复盘；会增加磁盘 IO；另外，当你在 UI 中关闭“合并后清理中间产物（output/.jobs）”时，也会默认保留成功 chunk 的 `resp/`）
 - `NOVEL_PROOFER_LLM_STREAM_DEBUG=1`：采集并返回截断版 SSE 原始调试文本（仅用于排障；会增加 CPU/内存开销）
 
 ### UI 调试面板
