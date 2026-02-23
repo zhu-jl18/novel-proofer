@@ -55,11 +55,11 @@ export function closeModal() {
 
     if (modalCloseTimer) clearTimeout(modalCloseTimer);
     modalCloseTimer = setTimeout(() => {
+        modalCloseTimer = null;
         if (token !== modalToken) return;
         el.backdrop.classList.add('hidden');
         el.backdrop.classList.remove('flex');
         if (cb) cb();
-        modalCloseTimer = null;
     }, 200);
 }
 
