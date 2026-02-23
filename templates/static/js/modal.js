@@ -85,7 +85,8 @@ export function showConfirm(message) {
           <button type="button" class="modal-cancel px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">取消</button>
           <button type="button" class="modal-confirm px-4 py-2 bg-ink text-white text-sm font-medium rounded-lg hover:bg-zinc-800 transition-colors">确认</button>
         `;
-        
+        el.actions.className = 'flex justify-end gap-2';
+
         modalCloseCallback = () => resolve(false);
         el.actions.querySelector('.modal-cancel').onclick = () => { closeModal(); resolve(false); };
         el.actions.querySelector('.modal-confirm').onclick = () => { closeModal(); resolve(true); };
@@ -149,12 +150,12 @@ export function showJobPicker(jobs, { hasCurrentJob = false } = {}) {
         if (manualBtn && manualInput) {
             manualBtn.onclick = () => {
                 const val = manualInput.value.trim();
-                if (val) { closeModal(); resolve(val); }
+                if (val && val !== '__purge_all__') { closeModal(); resolve(val); }
             };
             manualInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     const val = e.target.value.trim();
-                    if (val) { closeModal(); resolve(val); }
+                    if (val && val !== '__purge_all__') { closeModal(); resolve(val); }
                 }
             });
         }
